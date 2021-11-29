@@ -23,7 +23,7 @@ router.get('/:id', async (req, res) => {
   // find a single product by its `id`
   try {
     const productData = await Product.findByPk(req.params.id, { 
-      include: [{ model: Category }, {model: Tag} ]
+      include: [{ model: Category }, {model: Tag}],
     });
     res.status(200).json(productData);
   } catch (err) {
@@ -75,14 +75,17 @@ router.put('/:id', (req, res) => {
   })
     .then((product) => {
       // find all associated tags from ProductTag
+      //finding all ProductTag's where the product id = the id pushed in as param. 
       return ProductTag.findAll({ where: { product_id: req.params.id } });
     })
     .then((productTags) => {
       // get list of current tag_ids
+      //this is going through each product Tag and taking it's tag_id and storing it into 
+      //the productTagsIds variable below. Why as object here. 
       const productTagIds = productTags.map(({ tag_id }) => tag_id);
       // create filtered list of new tag_ids
       const newProductTags = req.body.tagIds
-        .filter((tag_id) => !productTagIds.includes(tag_id))
+      .filter((tag_id) => !productTagIds.includes(tag_id))
         .map((tag_id) => {
           return {
             product_id: req.params.id,
@@ -117,7 +120,7 @@ router.delete('/:id', async (req, res) => {
   })
   res.status(200).json(productData)
 } catch (err) {
-  res.status(500).json(productData)
+  res.status(500).json(err)
 }
 });
 
